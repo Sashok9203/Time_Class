@@ -4,7 +4,10 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            Time time = new Time(5555);
+            Console.WriteLine(time);
+            TimeOnly tmp = (TimeOnly)time;
+            Console.WriteLine(tmp.ToLongTimeString());
         }
     }
 }
