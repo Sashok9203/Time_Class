@@ -11,14 +11,7 @@ namespace Time_Class
 		private uint _hours;
         private uint _minutes;
         private uint _seconds;
-		private static uint ToSeconds(uint hours,  uint minutes, uint seconds) => hours * 3600 + minutes * 60 + seconds;
-        private static void FromSeconds(uint sec,out uint hours, out uint minutes, out uint seconds)
-		{
-			hours = sec / 3600 % 24;
-            minutes = sec % 3600 / 60;
-			seconds = sec % 3600 % 60;
-        }
-	
+			
         public Time():this(0,0,0) {}
         public Time(uint hours,uint minutes,uint seconds)
         {
@@ -26,10 +19,8 @@ namespace Time_Class
 			Minutes = minutes;	
 			Seconds = seconds;
         }
-        public Time(uint seconds)
-        {
-			FromSeconds(seconds,out _hours, out _minutes, out _seconds);
-        }
+        public Time(uint seconds) => FromSeconds(seconds, out _hours, out _minutes, out _seconds);
+        
         public uint Hours
 		{
 			get => _hours;
@@ -61,15 +52,15 @@ namespace Time_Class
 		public void Reset()
 		{
             DateTime time = DateTime.Now;
-			_hours = (uint)time.Hour;
+			_hours   = (uint)time.Hour;
 			_minutes = (uint)time.Minute;
 			_seconds = (uint)time.Second;	
         }
 		public override string ToString()
 		{
-			return $"{(_hours < 9 ? "0" + _hours : _hours)}" +
-				   $":{(_minutes < 9 ? "0" + _minutes : _minutes)}" +
-				   $":{(_seconds < 9 ? "0" + _seconds : _seconds)}";
+			return $"{(_hours < 10 ? "0" + _hours : _hours)}" +
+				   $":{(_minutes < 10 ? "0" + _minutes : _minutes)}" +
+				   $":{(_seconds < 10 ? "0" + _seconds : _seconds)}";
 		}
         public override bool Equals(object? obj)
         {
@@ -81,6 +72,14 @@ namespace Time_Class
         public override int GetHashCode()
         {
             return HashCode.Combine(_hours, _minutes, _seconds);
+        }
+
+        public static uint ToSeconds(uint hours, uint minutes, uint seconds) => hours * 3600 + minutes * 60 + seconds;
+        public static void FromSeconds(uint sec, out uint hours, out uint minutes, out uint seconds)
+        {
+            hours = sec / 3600 % 24;
+            minutes = sec % 3600 / 60;
+            seconds = sec % 3600 % 60;
         }
 
         public static Time operator ++(Time time)
@@ -97,7 +96,7 @@ namespace Time_Class
 					else time._hours = 0;
 				}
 			}
-            return new(time._hours, time._minutes, time._seconds);
+            return time;
 		}
         public static Time operator --(Time time)
         {
@@ -113,13 +112,36 @@ namespace Time_Class
                     else time._hours = 23;
                 }
             }
-            return new(time._hours, time._minutes, time._seconds);
+            return time;
         }
 
-		public static bool operator ==(Time time1, Time time2) => time1.Equals(time2);
-        public static bool operator !=(Time time1, Time time2) => !(time1==time2);
-		public static bool operator >(Time time1, Time time2) => ToSeconds(time1._hours, time1._minutes, time1._seconds) > ToSeconds(time2._hours, time2._minutes, time2._seconds);
-		public static bool operator <(Time time1, Time time2) => ToSeconds(time1._hours, time1._minutes, time1._seconds) < ToSeconds(time2._hours, time2._minutes, time2._seconds);
+		public static Time operator +(Time time1, Time time2)
+		{
+			return new Time(ToSeconds(time1._hours, time1._minutes, time1._seconds) + 
+				            ToSeconds(time2._hours, time2._minutes, time2._seconds));
+		}
+        public static Time operator -(Time time1, Time time2)
+        {
+            const uint _day_seconds = 86400;
+            uint sec1 = ToSeconds(time1._hours, time1._minutes, time1._seconds);
+			uint sec2 = ToSeconds(time2._hours, time2._minutes, time2._seconds);
+			if (sec1 < sec2)
+		     	return new Time(_day_seconds - (sec2 - sec1) % _day_seconds);
+			return new Time(sec1 - sec2);
+        }
+
+        public static bool operator ==(Time time1, Time time2) => time1.Equals(time2);
+		public static bool operator !=(Time time1, Time time2) => !(time1 == time2);
+		public static bool operator >(Time time1, Time time2)
+		{
+			return ToSeconds(time1._hours, time1._minutes, time1._seconds) >
+				   ToSeconds(time2._hours, time2._minutes, time2._seconds);
+		}
+		public static bool operator <(Time time1, Time time2)
+		{
+			return ToSeconds(time1._hours, time1._minutes, time1._seconds) <
+				   ToSeconds(time2._hours, time2._minutes, time2._seconds);
+		}
         public static bool operator <=(Time time1, Time time2) => !(time1 > time2);
         public static bool operator >=(Time time1, Time time2) => !(time1 < time2);
 
@@ -135,6 +157,5 @@ namespace Time_Class
         }
 
 		public static explicit operator TimeOnly(Time time1) => new TimeOnly((int)time1._hours, (int)time1._minutes, (int)time1._seconds);
-
     }
 }
