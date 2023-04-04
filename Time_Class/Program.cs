@@ -5,20 +5,17 @@
         static void Main(string[] args)
         {
             Console.CursorVisible = false;
-            bool exit = false;
             Time time = new Time();
             time.Reset();
             Time time2 = new Time(Time.ToSeconds(time.Hours,time.Minutes,time.Seconds));
             do
             {
-                Console.Clear();
+                Console.SetCursorPosition(0,0);
                 Console.WriteLine($"   Time1           Time2          Time1 - Time2          Time1 + Time2");
                 Console.WriteLine($"  {++time}        {--time2}           {time2 - time}               {time2 + time}");
+                Console.WriteLine("\n\n Press Escape to exit...");
                 Thread.Sleep(1000);
-                if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape) exit = true;
-            } while (!exit);
-
-
+            } while (!(Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape));
         }
     }
 }
