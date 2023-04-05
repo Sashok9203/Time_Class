@@ -62,14 +62,14 @@ namespace Time_Class
 				   $":{(_minutes < 10 ? "0" + _minutes : _minutes)}" +
 				   $":{(_seconds < 10 ? "0" + _seconds : _seconds)}";
 		}
-        public override bool Equals(object? obj)
+        public override bool   Equals(object? obj)
         {
             return obj is Time time &&
                    _hours == time._hours &&
                    _minutes == time._minutes &&
                    _seconds == time._seconds;
         }
-        public override int GetHashCode()
+        public override int    GetHashCode()
         {
             return HashCode.Combine(_hours, _minutes, _seconds);
         }
@@ -132,12 +132,12 @@ namespace Time_Class
 
         public static bool operator ==(Time time1, Time time2) => time1.Equals(time2);
 		public static bool operator !=(Time time1, Time time2) => !(time1 == time2);
-		public static bool operator >(Time time1, Time time2)
+		public static bool operator > (Time time1, Time time2)
 		{
 			return ToSeconds(time1._hours, time1._minutes, time1._seconds) >
 				   ToSeconds(time2._hours, time2._minutes, time2._seconds);
 		}
-		public static bool operator <(Time time1, Time time2)
+		public static bool operator < (Time time1, Time time2)
 		{
 			return ToSeconds(time1._hours, time1._minutes, time1._seconds) <
 				   ToSeconds(time2._hours, time2._minutes, time2._seconds);
@@ -145,7 +145,7 @@ namespace Time_Class
         public static bool operator <=(Time time1, Time time2) => !(time1 > time2);
         public static bool operator >=(Time time1, Time time2) => !(time1 < time2);
 
-		public static bool operator true(Time time1)
+		public static bool operator true (Time time1)
 		{
 			DateTime tmp = DateTime.Now;
 			return time1 >= new Time((uint)tmp.Hour, (uint)tmp.Second, (uint)tmp.Minute);
